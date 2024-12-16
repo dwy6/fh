@@ -8,7 +8,7 @@ function build_url() {
         document.getElementById("b_url").innerHTML = `输入的不是链接或者未加 http 请求头！`;
     } else {
         // 构造目标 URL，附加到指定的基础路径
-        url = "https://qiantigers.github.io/qq_fanghong/" + "api/?url=" + url;
+        url = document.location.href + "api/?url=" + url;
 
         // 显示生成的 URL 并创建一个可以点击的超链接
         document.getElementById("b_url").innerHTML = `<a href=${url} target='_blank'>${url}</a>`;

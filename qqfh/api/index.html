@@ -4,39 +4,62 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0,viewport-fit=cover">
     <title>防红跳转</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            padding: 30px 20px;
+            line-height: 1.6;
+        }
+        #tips {
+            font-size: 25px;
+            text-align: center;
+            color: #333;
+        }
+        #tips b {
+            color: red;
+            word-break: break-all;
+        }
+    </style>
 </head>
 <body>
-    <div id="tips" style="font-size:25px;text-align: center;line-height: 50px;"></div>
+    <div id="tips"></div>
+
     <script>
-    var url = document.location.toString();
-    var urlParmStr = url.slice(url.indexOf('=')+1);
-    var ua = navigator.userAgent.toLowerCase();
-    var isQQ = ua.indexOf('qq') != -1;
-    var isWeixin = ua.indexOf('micromessenger') != -1;
-    var isAndroid = ua.indexOf('android') != -1;
-    var isIos = (ua.indexOf('iphone') != -1) || (ua.indexOf('ipad') != -1);
+        // 获取跳转地址（安全获取 URL 参数）
+        function getTargetUrl() {
+            try {
+                const url = new URL(location.href);
+                // 支持 ?url=目标链接 传参
+                return url.searchParams.get('url') || "https://dwy6.github.io/qqfh/";
+            } catch (e) {
+                return "https://dwy6.github.io/qqfh/";
+            }
+        }
 
-    var notice_openBrowser = "<h2>请点击右上角，通过浏览器打开本页面。</h2><br />不得不看的内容，复制到浏览器打开吧：<b style=\"color:red\">https://dwy6.github.io/qqfh/</b>"
+        // 环境判断
+        const ua = navigator.userAgent.toLowerCase();
+        const isWechat = ua.includes('micromessenger');
+        const isQQ = ua.includes('qq/');
+        const inWechatOrQQ = isWechat || isQQ;
 
-    // 判断是不是在微信客户端打开
-    if(isWeixin || isQQ) {
-    // 判断是在Android的微信客户端还是Ios的微信客户端
-    if (isAndroid) {
-    document.getElementById("tips").innerHTML=notice_openBrowser;
-    }else if (isIos) {
-    document.getElementById("tips").innerHTML=notice_openBrowser;
-    }else{
-    document.getElementById("tips").innerHTML=notice_openBrowser;
-    }
-    } else {
-    // 不是微信客户端，直接可以访问链接
-    if (urlParmStr == url){
-        urlParmStr = "https://dwy6.github.io/qqfh/";
-    }
-    console.log(urlParmStr);
-    location.href=urlParmStr;
-    }
-</script>
+        // 提示文案
+        const tipsText = `<h2>请点击右上角，通过浏览器打开本页面</h2>
+        <br>
+        复制下方链接到浏览器打开：<br>
+        <b>${getTargetUrl()}</b>`;
 
+        // 逻辑执行
+        if (inWechatOrQQ) {
+            // 微信/QQ内置浏览器 → 显示提示
+            document.getElementById("tips").innerHTML = tipsText;
+        } else {
+            // 外部浏览器 → 直接跳转
+            location.href = getTargetUrl();
+        }
+    </script>
 </body>
 </html>
